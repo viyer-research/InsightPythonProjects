@@ -10,12 +10,17 @@
 ################################################################################
 import os
 import sys
+from nltk import PorterStemmer
+import string
 
 #Initilize globals
 count = 0
 val = 0
+_maxSize=10000
+strOut = None
 dictWords = { }
 lstFileNames = []
+cacheWriteLines = []
 
 ################################################################################
 output_file_name = os.path.join(os.getcwd(),"wc_output","wc_result.txt")
@@ -57,9 +62,15 @@ for inputCurr in lstFileNames:
                 line.decode('ascii')
             except Exception, error:
                 continue ## skip blanks
+            for c in string.punctuation:
+                line= line.replace(c,"")
+            ## Strip Punctuation
             for word in line.split():
             #print word
                 count = count + 1
+                # make lower case and stem  word
+                word = word.lower()
+                word = PorterStemmer().stem_word(word)
                 if word in dictWords: 
 #                   print 'found', d1[word]
                     val = dictWords[word]
@@ -70,7 +81,8 @@ for inputCurr in lstFileNames:
     finally:
         file_object.close()
     
-print "Complete building index of total words:\n", count
+print "Completed building index of total words seen:\n", count
+print "Total unique words in list:\n", len(dictWords)
 keys = dictWords.keys()
 keys.sort()
 print "Sorted <word,counts> pairs\n"
@@ -84,7 +96,14 @@ print "Writing to output dir:", output_file_name, "\n"
 try:
     for skey in keys:
 #	    print skey, "\t", dictWords[skey]
-	    output_file_object.write(str(skey)+"\t"+str(dictWords[skey])+"\n")
+        strOut = str(skey) + "\t\t\t\t" + str(dictWords[skey]) + "\n"
+        cacheWriteLines.append(strOut)
+        if (len(cacheWriteLines) > _maxSize):
+            output_file_object.writelines(cacheWriteLines)
+            cacheWriteLines = []
 finally:
+    if ( len(cacheWriteLines) > 0 and len(cacheWriteLines) < _maxSize ):
+        output_file_object.writelines(cacheWriteLines)
+        cacheWriteLines = []
     output_file_object.close()
     print "Results writing complete!"
