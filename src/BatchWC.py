@@ -6,7 +6,8 @@
 #Type:	        <key,Val> pairs
 #Created:	    05-May-2015
 #Post-History:	05-May-2015
-#
+#Dependency     nltk    for Porter Stemming
+#               optparse for cmd line parsing
 ################################################################################
 import os
 import sys
@@ -43,7 +44,7 @@ cacheWriteLines = []
 ################################################################################
 parser = OptionParser()
 inputargs = parser.parse_args()
-if len(inputargs) != 2:
+if len(inputargs[1]) < 2:
    print "incorrect number of arguments\n"
    print "usage: prog <./input_dir> <./output_dir>/wc_result.txt\n"
    sys.exit(1)
@@ -133,7 +134,7 @@ try:
         # right justify
         strOut = "%25s%s%s%s" % (str(skey),"\t\t",str(dictWords[skey]), "\n")
         cacheWriteLines.append(strOut)
-        if (len(cacheWriteLines) > _maxSize):
+        if (len(cacheWriteLines) >= _maxSize):
             output_file_object.writelines(cacheWriteLines)
             cacheWriteLines = []
 finally:
@@ -146,5 +147,5 @@ finally:
 #                   End of Batch Processing                                 #
 #############################################################################
 print ">> End of batch processing"
-print "Results writing complete!"
+print "Results writing complete"
 
