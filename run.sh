@@ -12,8 +12,8 @@ apt-get install python-pandas
 #
 #
 # next I'll make sure that all my programs (written in Python in this example) have the proper permissions
-chmod a+x BatchWC.py
-chmod a+x MedianWPLApp.py
+chmod a+x ./src/BatchWC.py
+chmod a+x ./src/MedianWPLApp.py
 
 # finally I'll execute my programs, with defaults
 python ./src/BatchWC.py ./wc_input ./wc_output/wc_result.txt
